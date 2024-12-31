@@ -1,122 +1,152 @@
-# gitin - GitHub Repository Content Extractor
+# gitin
 
 [![PyPI version](https://badge.fury.io/py/gitin.svg)](https://badge.fury.io/py/gitin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Versions](https://img.shields.io/pypi/pyversions/gitin.svg)](https://pypi.org/project/gitin/)
 
-A command-line tool designed to extract and format GitHub repository content for effective use with Large Language Models (LLMs). Perfect for providing codebases as context in LLM conversations.
+👋 Hi there! I'm [unclecode](https://x.com/unclecode), the author of [Crawl4AI](https://github.com/unclecode/crawl4ai) - a no 1 trending GitHub repository that's crawl the web in LLms friendly way. While working with LLMs like Claude and GPT, I often need to provide codebase context efficiently. That's why I created `gitin` - a simple yet powerful tool that helps you extract and format GitHub repository content for LLM consumption.
 
-## Features
+## Why gitin?
 
-- 🔍 **Smart Extraction**: Extract files based on patterns and content
-- 📝 **LLM-Optimized**: Clean markdown output with token estimation
-- 🚀 **Progress Tracking**: Visual progress bars for operations
-- 🎯 **Flexible Filtering**: Include/exclude patterns and content search
-- 📊 **Size Control**: File size limits and statistics
-- 🔄 **Version Control**: Respects .gitignore rules
+When chatting with AI models about code, providing the right context is crucial. `gitin` helps you:
+- Extract relevant code files from any GitHub repository
+- Format them into a clean, token-efficient markdown file
+- Filter files by type, size, and content
+- Get token estimates for LLM context windows
 
 ## Installation
 
-### From PyPI (Recommended)
 ```bash
 pip install gitin
 ```
 
-### From Source
-```bash
-git clone https://github.com/unclecode/gitin
-cd gitin
-pip install -e .
-```
-
 ## Quick Start
 
+Basic usage - get all Python files from a repository:
 ```bash
-# Basic usage
-gitin https://github.com/username/repo -o output.md
-
-# Extract Python files only
-gitin https://github.com/username/repo --include="*.py" -o python_files.md
-
-# Search for specific content
-gitin https://github.com/username/repo --search="TODO,FIXME" -o review.md
+gitin https://github.com/unclecode/crawl4ai -o output.md --include="*.py"
 ```
 
-## Advanced Usage
+## Examples
 
-### Code Review Workflow
+### 1. Basic Repository Extraction
+Extract Python files from Crawl4AI, excluding tests:
 ```bash
-# Extract implementation files, excluding tests
-gitin https://github.com/username/repo \
-  --include="src/*.py" \
-  --exclude="test_*,*_test.py" \
-  --search="TODO,FIXME,HACK" \
-  -o code_review.md
+gitin https://github.com/unclecode/crawl4ai \
+    --include="*.py" \
+    --exclude="tests/*" \
+    -o basic_example.md
 ```
 
-### Feature Analysis
+### 2. Search for Specific Content
+Find files containing async functions:
 ```bash
-# Find async/await usage
-gitin https://github.com/username/repo \
-  --include="*.py,*.js" \
-  --search="async def,await" \
-  -o async_patterns.md
+gitin https://github.com/unclecode/crawl4ai \
+    --include="*.py" \
+    --search="async def" \
+    -o async_functions.md
 ```
 
-### Documentation Extraction
+### 3. Multiple File Types with Size Limit
+Get both Python and Markdown files under 5KB:
 ```bash
-# Get all documentation files
-gitin https://github.com/username/repo \
-  --include="docs/*,*.md,*.rst" \
-  --exclude="**/tests/*" \
-  -o documentation.md
+gitin https://github.com/unclecode/crawl4ai \
+    --include="*.py,*.md" \
+    --exclude="tests/*,docs/*" \
+    --max-size=5000 \
+    -o small_files.md
+```
+
+### 4. Documentation Files Only
+Extract markdown files for documentation:
+```bash
+gitin https://github.com/unclecode/crawl4ai \
+    --include="docs/**/*.md" \
+    -o documentation.md
+```
+
+## Output Format
+
+The tool generates a clean markdown file with:
+- Repository structure
+- File contents with syntax highlighting
+- Clear separators between files
+- Token count estimation for LLMs
+
+Example output structure:
+```markdown
+# Repository Content
+
+## path/to/file1.py
+```python
+def hello():
+    print("Hello, World!")
+```
+
+## path/to/file2.md
+```markdown
+# Documentation
+This is a markdown file...
 ```
 
 ## Command-Line Options
 
 ```
 Options:
-  --version           Show the version and exit.
+  --version           Show the version and exit
   --exclude TEXT      Comma-separated glob patterns to exclude
-                     Example: --exclude="test_*,*.tmp,docs/*"
+                      Example: --exclude="test_*,*.tmp,docs/*"
   --include TEXT      Comma-separated glob patterns to include
-                     Example: --include="*.py,src/*.js,lib/*.rb"
-  --search TEXT       Comma-separated strings to search in content
-                     Example: --search="TODO,FIXME,HACK"
+                      Example: --include="*.py,src/*.js,lib/*.rb"
+  --search TEXT       Comma-separated strings to search in file contents
+                      Example: --search="TODO,FIXME,HACK"
   --max-size INTEGER  Maximum file size in bytes (default: 1MB)
   -o, --output TEXT   Output markdown file path [required]
-  --help             Show this message and exit.
+  --help             Show this message and exit
 ```
 
-## LLM Integration Tips
+## Use with LLMs
 
-1. **Context Window Management**
-   - Check the token count in the summary
-   - Use `--max-size` to limit file sizes
-   - Use `--search` to focus on relevant sections
+When using the output with AI models:
 
-2. **Effective Filtering**
-   - Use `--include` for specific file types
-   - Use `--exclude` to remove noise
-   - Combine with `--search` for precise results
+1. Generate the markdown file:
+```bash
+gitin https://github.com/your/repo -o context.md --include="*.py"
+```
 
-3. **Best Practices**
-   ```bash
-   # Extract core functionality
-   gitin https://github.com/org/repo \
-     --include="src/**/*.py" \
-     --exclude="**/*test*" \
-     --max-size=50000 \
-     -o core_logic.md
-   ```
+2. Copy the content to your conversation with the AI model
+
+3. The AI model will now have context about your codebase and can help with:
+   - Code review
+   - Bug fixing
+   - Feature implementation
+   - Documentation
+   - Refactoring suggestions
+
+## Pro Tips
+
+1. **Token Efficiency**: Use `--max-size` to limit file sizes and stay within context windows
+2. **Relevant Context**: Use `--search` to find specific code patterns or TODO comments
+3. **Multiple Patterns**: Combine patterns with commas: `--include="*.py,*.js,*.md"`
+4. **Exclude Tests**: Use `--exclude="tests/*,*_test.py"` to focus on main code
+5. **Documentation**: Include only docs with `--include="docs/**/*.md"`
+
+## About the Author
+
+I'm unclecode, and I love building tools that make AI development easier. Check out my other project [Crawl4AI](https://github.com/unclecode/crawl4ai) and follow me on X [@unclecode](https://x.com/unclecode).
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest features
+- Submit pull requests
+
+I'm extremely busy with Crawl4ai, so I may not be able to check this repository frequently. However, feel free to send your pull request, and I will try to approve it.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - feel free to use in your projects!
 
 ## Changelog
 
