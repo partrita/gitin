@@ -73,22 +73,6 @@ The tool generates a clean markdown file with:
 - Clear separators between files
 - Token count estimation for LLMs
 
-Example output structure:
-```markdown
-# Repository Content
-
-## path/to/file1.py
-```python
-def hello():
-    print("Hello, World!")
-```
-
-## path/to/file2.md
-```markdown
-# Documentation
-This is a markdown file...
-```
-
 ## Command-Line Options
 
 ```
